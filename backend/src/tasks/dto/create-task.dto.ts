@@ -6,7 +6,6 @@ export class CreateTaskDto {
   @MinLength(3)
   title: string;
 
-  @IsNotEmpty()
   order: number;
 
   description: string;

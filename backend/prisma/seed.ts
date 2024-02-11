@@ -16,21 +16,21 @@ async function main() {
 
   const sectionsToCreate = [
     {
-      id: 1,
+      id: 2,
       title: 'TO DO',
       description: 'The first section created with seed',
       order: 1,
       boardId: board.id,
     },
     {
-      id: 2,
+      id: 3,
       title: 'IN PROGRESS',
       description: 'The second section created with seed',
       order: 2,
       boardId: board.id,
     },
     {
-      id: 3,
+      id: 4,
       title: 'DONE',
       description: 'The third section created with seed',
       order: 3,
@@ -53,7 +53,7 @@ async function main() {
       title: 'The first task',
       description: 'Enjoy your kanban board',
       order: 1,
-      sectionId: 2,
+      sectionId: 3,
     },
   });
 

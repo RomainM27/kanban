@@ -8,13 +8,25 @@ export class TasksService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createTaskDto: CreateTaskDto) {
+    const highestOrder = await this.findHighestOrderInSection(
+      createTaskDto.sectionId,
+    );
+
+    const newTaskOrder = highestOrder + 1;
+    const newTask = { ...createTaskDto, order: newTaskOrder };
     return this.databaseService.task.create({
-      data: createTaskDto,
+      data: newTask,
     });
   }
 
-  async findAll() {
-    return this.databaseService.task.findMany();
+  async findAll(sectionId?: number) {
+    const queryOptions: { where?: { sectionId: number } } = {};
+
+    if (typeof sectionId !== 'undefined') {
+      queryOptions.where = { sectionId };
+    }
+
+    return this.databaseService.task.findMany(queryOptions);
   }
 
   async findOne(id: number) {
@@ -40,5 +52,21 @@ export class TasksService {
         id,
       },
     });
+  }
+
+  async findHighestOrderInSection(sectionId: number): Promise<number> {
+    const tasks = await this.databaseService.task.findMany({
+      where: { sectionId },
+      orderBy: { order: 'desc' },
+      take: 1,
+    });
+
+    // If there are no tasks in the section, return a default value (e.g., 0)
+    if (tasks.length === 0) {
+      return 0;
+    }
+
+    // Return the order of the first task, which has the highest order
+    return tasks[0].order;
   }
 }
