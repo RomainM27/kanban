@@ -1,10 +1,10 @@
 import Navbar from "@/components/Navbar";
 
-type LayoutType = {
+type Props = {
   children: React.ReactNode;
 };
 
-function Layout(props: LayoutType) {
+function Layout(props: Props) {
   const { children } = props;
 
   return (

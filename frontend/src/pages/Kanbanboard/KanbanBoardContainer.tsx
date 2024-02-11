@@ -19,11 +19,11 @@ import {
 import EditTaskModal from "./EditTaskModal";
 import useUpdateTask from "@hooks/useUpdateTask";
 
-type KanbanBoardContainerProps = {
+type Props = {
   boardData: Board;
 };
 
-function KanbanBoardContainer(props: KanbanBoardContainerProps) {
+function KanbanBoardContainer(props: Props) {
   const { boardData } = props;
 
   const defaultTasks = useMemo(() => {

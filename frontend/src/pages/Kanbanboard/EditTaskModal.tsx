@@ -13,13 +13,13 @@ import { Task, UpdateTask } from "../../types";
 import { ChangeEvent, useState } from "react";
 import { EditIcon } from "lucide-react";
 
-type EditTaskModalProps = {
+type Props = {
   task: Task;
   updateTask: (updateTask: UpdateTask) => void;
   isOpen: boolean;
   onClose: () => void;
 };
-function EditTaskModal(props: EditTaskModalProps) {
+function EditTaskModal(props: Props) {
   const { task, updateTask, isOpen, onClose } = props;
 
   const [title, setTitle] = useState(task.title);

@@ -13,21 +13,17 @@ import {
 import { Button } from "@/components/ui/button/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-interface Props {
+type Props = {
   section: Section;
   createTask: (sectionId: number) => void;
   handleUpdateTask: (task: Task) => void;
   deleteTask: (id: number) => void;
   tasks: Task[];
-}
+};
 
-function ColumnContainer({
-  section,
-  createTask,
-  tasks,
-  deleteTask,
-  handleUpdateTask,
-}: Props) {
+function ColumnContainer(props: Props) {
+  const { section, createTask, handleUpdateTask, deleteTask, tasks } = props;
+
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task?.id);
   }, [tasks]);

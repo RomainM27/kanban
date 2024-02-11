@@ -4,17 +4,16 @@ import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import { Task } from "../types";
 import useUpdateTask from "./useUpdateTask";
 
-type useDragAndDropProps = {
+type Props = {
   initialTasks: Task[];
 };
-function useDragAndDrop(props: useDragAndDropProps) {
+function useDragAndDrop(props: Props) {
   const { initialTasks } = props;
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  // TODO implement this when a task is moved
   const updateTaskMutation = useUpdateTask();
 
   const onDragStart = (event: DragStartEvent) => {
@@ -34,15 +33,18 @@ function useDragAndDrop(props: useDragAndDropProps) {
     resetActive();
     const { active, over } = event;
 
-    console.log(event);
     if (!over) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+    if (!active.data.current) return;
 
-    if (activeId === overId) return;
+    const id = Number(active.id);
 
     console.log("DRAG END");
+    updateTaskMutation.mutate({
+      id,
+      sectionId: active.data.current.task.sectionId,
+      order: active.data.current.sortable.index,
+    });
   };
 
   const onDragOver = (event: DragOverEvent) => {

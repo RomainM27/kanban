@@ -6,13 +6,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button/button";
 import { cn } from "@/lib/utils";
 
-interface Props {
+type Props = {
   task: Task;
   deleteTask: (id: number) => void;
   handleUpdateTask: (task: Task) => void;
-}
+};
 
-function TaskCard({ task, deleteTask, handleUpdateTask }: Props) {
+function TaskCard(props: Props) {
+  const { task, deleteTask, handleUpdateTask } = props;
+
   const {
     setNodeRef,
     attributes,
