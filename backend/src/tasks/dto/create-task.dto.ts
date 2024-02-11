@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  MinLength,
+  IsInt,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -6,10 +12,15 @@ export class CreateTaskDto {
   @MinLength(3)
   title: string;
 
-  order: number;
+  @IsOptional()
+  @IsInt()
+  order?: number;
 
-  description: string;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @IsNotEmpty()
+  @IsInt()
   sectionId: number;
 }
