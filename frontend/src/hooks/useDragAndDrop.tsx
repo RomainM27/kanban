@@ -43,7 +43,7 @@ function useDragAndDrop(props: Props) {
     updateTaskMutation.mutate({
       id,
       sectionId: active.data.current.task.sectionId,
-      order: active.data.current.sortable.index,
+      order: active.data.current.sortable.index + 1,
     });
   };
 

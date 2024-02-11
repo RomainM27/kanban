@@ -64,39 +64,73 @@ export class TasksService {
         throw new NotFoundException(`Task with ID ${id} not found.`);
       }
 
-      const { sectionId: newSectionId, order: newOrder } = updateTaskDto;
+      if (updateTaskDto.order) {
+        console.log('No order provided in updateTaskDto');
 
-      const { sectionId: oldSectionId, order: oldOrder } = task;
+        const { sectionId: newSectionId, order: newOrder } = updateTaskDto;
 
-      if (newOrder < 0) {
-        throw new BadRequestException('Order must be a positive integer.');
-      }
+        const { sectionId: oldSectionId, order: oldOrder } = task;
 
-      // Check if there's a need to update the order within the same or different sections
-      if (newOrder !== oldOrder || oldSectionId !== newSectionId) {
-        // Handle in the old section
-        if (oldSectionId !== newSectionId) {
-          await databaseService.task.updateMany({
-            where: { sectionId: oldSectionId, order: { gt: oldOrder } },
-            data: { order: { decrement: 1 } },
-          });
+        if (newOrder < 0) {
+          throw new BadRequestException('Order must be a positive integer.');
         }
 
-        // Handle in the new section
-        await databaseService.task.updateMany({
-          where: {
-            sectionId: newSectionId,
-            ...(oldSectionId !== newSectionId && {
-              order: { gte: newOrder },
-            }),
-          },
-          data: { order: { increment: 1 } },
-        });
+        // Check if there's a need to update the order within the same or different sections
+        if (newOrder !== oldOrder || oldSectionId !== newSectionId) {
+          // If the section ID is different, we need to update the order in both sections
+          if (oldSectionId !== newSectionId) {
+            // Handle in the old section
+            await databaseService.task.updateMany({
+              where: { sectionId: oldSectionId, order: { gt: oldOrder } },
+              data: { order: { decrement: 1 } },
+            });
+
+            // Handle in the new section
+            await databaseService.task.updateMany({
+              where: {
+                sectionId: newSectionId,
+                order: { gte: newOrder },
+              },
+              data: { order: { increment: 1 } },
+            });
+          }
+
+          // If the section ID is the same, we only need to update the order within the same section
+          if (oldSectionId === newSectionId) {
+            console.log('Updating order within the same section');
+
+            if (newOrder > oldOrder) {
+              console.log('New order is greater than old order');
+
+              await databaseService.task.updateMany({
+                where: {
+                  sectionId: newSectionId,
+                  order: { lte: newOrder, gt: oldOrder },
+                },
+                data: { order: { decrement: 1 } },
+              });
+            }
+
+            if (newOrder < oldOrder) {
+              console.log('New order is less than old order');
+
+              await databaseService.task.updateMany({
+                where: {
+                  sectionId: newSectionId,
+                  order: { gte: newOrder, lt: oldOrder },
+                },
+                data: { order: { increment: 1 } },
+              });
+            }
+          }
+        }
       }
+
+      const updatedTask = { order: task.order, ...updateTaskDto };
 
       return databaseService.task.update({
         where: { id },
-        data: updateTaskDto,
+        data: updatedTask,
       });
     });
   }
