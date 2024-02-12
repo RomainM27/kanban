@@ -1,8 +1,10 @@
 # kanban
 
-## To Start the project
+## Getting Started
 
-1. In the root folder :
+To initiate the project, follow the steps outlined below:
+
+##### 1. In the root folder :
 
 ```
 docker-compose up
@@ -10,7 +12,7 @@ docker-compose up
 
 To run Postgress and the backend
 
-2. In the /frontend folder :
+##### 2. In the /frontend folder :
 
 We need to install and launch a command
 
@@ -22,8 +24,8 @@ yarn dev
 
 ### Localhost
 
-- Frontend : http://localhost:5173/
-- Backend : http://localhost:3000/api Info with swagger
+- Frontend: The frontend can be accessed at http://localhost:5173/.
+- Backend: The backend and API documentation (Swagger) are available at http://localhost:3000/api.
 
 ### Database
 
@@ -37,6 +39,10 @@ npx prisma studio
 
 And go to http://localhost:5555
 
-### If you want to use prisma
+### Utilizing Prisma
 
-You need to add a .env, in local, you can copy the .env.exemple and rename it .env
+For local development, you need to configure environment variables. Copy the .env.example file and rename it to .env in the same directory.
+
+## To-Do
+
+- Implement tests to ensure reliability and stability of the application.
