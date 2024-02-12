@@ -24,8 +24,6 @@ export class BoardsService {
       },
     });
 
-    console.log(boards);
-
     if (!boards) {
       throw new NotFoundException(`No board found.`);
     }

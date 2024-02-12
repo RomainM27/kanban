@@ -7,8 +7,6 @@ export class BoardsController {
 
   @Get('/first')
   findFirst() {
-    console.log('boards.controller.ts: findFirst()');
-
     return this.boards.findFirst();
   }
 
