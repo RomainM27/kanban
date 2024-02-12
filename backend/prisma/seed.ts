@@ -4,11 +4,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // create two dummy articles
-  const board = await prisma.board.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
+  // create dummy data
+  const board = await prisma.board.create({
+    data: {
       title: 'First board',
       description: 'The first board created with seed',
     },
@@ -16,21 +14,18 @@ async function main() {
 
   const sectionsToCreate = [
     {
-      id: 2,
       title: 'TO DO',
       description: 'The first section created with seed',
       order: 1,
       boardId: board.id,
     },
     {
-      id: 3,
       title: 'IN PROGRESS',
       description: 'The second section created with seed',
       order: 2,
       boardId: board.id,
     },
     {
-      id: 4,
       title: 'DONE',
       description: 'The third section created with seed',
       order: 3,
@@ -38,26 +33,36 @@ async function main() {
     },
   ];
 
-  for (const section of sectionsToCreate) {
-    await prisma.section.upsert({
-      where: { id: section.id },
-      update: {},
-      create: section,
-    });
-  }
+  await prisma.section.createMany({
+    data: sectionsToCreate,
+  });
 
-  const task = await prisma.task.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
+  const sections = await prisma.section.findMany();
+
+  const tasksToCreate = [
+    {
       title: 'The first task',
       description: 'Enjoy your kanban board',
       order: 1,
-      sectionId: 3,
+      sectionId: sections[0].id,
     },
-  });
+    {
+      title: 'The second task',
+      description: 'Enjoy your kanban board',
+      order: 1,
+      sectionId: sections[1].id,
+    },
+    {
+      title: 'The done task',
+      description: 'Enjoy your kanban board',
+      order: 1,
+      sectionId: sections[2].id,
+    },
+  ];
 
-  console.log({ board, task });
+  await prisma.task.createMany({
+    data: tasksToCreate,
+  });
 }
 
 // execute the main function

@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Board" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -11,10 +11,11 @@ CREATE TABLE "Board" (
 
 -- CreateTable
 CREATE TABLE "Section" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "order" INTEGER NOT NULL,
-    "boardId" INTEGER NOT NULL,
+    "description" TEXT,
+    "order" INTEGER,
+    "boardId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -23,11 +24,11 @@ CREATE TABLE "Section" (
 
 -- CreateTable
 CREATE TABLE "Task" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "order" INTEGER NOT NULL,
     "description" TEXT,
-    "sectionId" INTEGER NOT NULL,
+    "sectionId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
