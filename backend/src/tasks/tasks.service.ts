@@ -79,6 +79,29 @@ export class TasksService {
         if (newOrder !== oldOrder || oldSectionId !== newSectionId) {
           // If the section ID is different, we need to update the order in both sections
           if (oldSectionId !== newSectionId) {
+            // check if we can do the movement
+            const newSection = await databaseService.section.findUnique({
+              where: { id: newSectionId },
+              select: { id: true, title: true },
+            });
+
+            const oldSection = await databaseService.section.findUnique({
+              where: { id: oldSectionId },
+              select: { id: true, title: true },
+            });
+
+            if (newSection.title === 'TO DO' && oldSection.title === 'DONE') {
+              throw new BadRequestException(
+                'You cannot move a task from DONE to TO DO.',
+              );
+            }
+
+            if (newSection.title === 'DONE' && oldSection.title === 'TO DO') {
+              throw new BadRequestException(
+                'You cannot move a task from TO DO to DONE.',
+              );
+            }
+
             // Handle in the old section
             await databaseService.task.updateMany({
               where: { sectionId: oldSectionId, order: { gt: oldOrder } },

@@ -12,7 +12,11 @@ To run Postgress and the backend
 
 2. In the /frontend folder :
 
+We need to install and launch a command
+
 ```
+yarn
+
 yarn dev
 ```
 
@@ -32,3 +36,7 @@ npx prisma studio
 ```
 
 And go to http://localhost:5555
+
+### If you want to use prisma
+
+You need to add a .env, in local, you can copy the .env.exemple and rename it .env

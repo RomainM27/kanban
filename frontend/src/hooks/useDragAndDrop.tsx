@@ -3,11 +3,14 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import { Task, Section } from "../types";
 import useUpdateTask from "./useUpdateTask";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
 
 type Props = {
   initialTasks: Task[];
   initialSections: Section[];
 };
+
 function useDragAndDrop(props: Props) {
   const { initialTasks, initialSections } = props;
 
@@ -15,7 +18,7 @@ function useDragAndDrop(props: Props) {
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const [sectionTitleOnDragStart, setSectionTitleOnDragStart] = useState<
+  const [sectionIdOnDragStart, setSectionIdOnDragStart] = useState<
     string | null
   >(null);
 
@@ -32,9 +35,7 @@ function useDragAndDrop(props: Props) {
 
     if (type === "Task") {
       setActiveTask(active.data.current.task);
-      setSectionTitleOnDragStart(
-        getSectionTitleById(active.data.current.task.sectionId)
-      );
+      setSectionIdOnDragStart(active.data.current.task.sectionId);
     }
   };
 
@@ -49,11 +50,41 @@ function useDragAndDrop(props: Props) {
     const id = active.id as string;
 
     console.log("DRAG END");
-    updateTaskMutation.mutate({
-      id,
-      sectionId: active.data.current.task.sectionId,
-      order: active.data.current.sortable.index + 1,
-    });
+
+    updateTaskMutation.mutate(
+      {
+        id,
+        sectionId: active.data.current.task.sectionId,
+        order: active.data.current.sortable.index + 1,
+      },
+      {
+        onError: (error: Error) => {
+          if (isAxiosError(error)) {
+            console.log(error?.response?.data?.message);
+            toast.error(
+              error?.response?.data?.message ||
+                "You cannot move the task there."
+            );
+          }
+
+          const tasksToModify = [...tasks];
+
+          const from = active.data.current?.sortable.index;
+          const to = active.data.current?.task?.order
+            ? active.data.current.task.order - 1
+            : 0;
+
+          const activeIndex = tasks.findIndex((t) => t?.id === active.id);
+
+          tasksToModify[activeIndex].sectionId =
+            sectionIdOnDragStart ?? tasksToModify[activeIndex].sectionId;
+
+          setTasks((tasksToModify) => {
+            return arrayMove(tasksToModify, from, to);
+          });
+        },
+      }
+    );
   };
 
   const onDragOver = (event: DragOverEvent) => {
@@ -75,12 +106,15 @@ function useDragAndDrop(props: Props) {
       over.data.current?.task?.sectionId ?? over.data.current?.section?.id;
 
     const overSectionTitle = getSectionTitleById(sectionId);
+    const currentSectionTitle = getSectionTitleById(
+      sectionIdOnDragStart ?? sectionId
+    );
 
-    if (sectionTitleOnDragStart === "TO DO" && overSectionTitle === "DONE") {
+    if (currentSectionTitle === "TO DO" && overSectionTitle === "DONE") {
       return; // Prevent the move
     }
 
-    if (sectionTitleOnDragStart === "DONE" && overSectionTitle === "TO DO") {
+    if (currentSectionTitle === "DONE" && overSectionTitle === "TO DO") {
       return; // Prevent the move
     }
 
@@ -91,6 +125,9 @@ function useDragAndDrop(props: Props) {
 
         if (tasks[activeIndex]?.sectionId != tasks[overIndex].sectionId) {
           tasks[activeIndex].sectionId = tasks[overIndex].sectionId;
+
+          console.log({ tasks, activeIndex, overIndex });
+
           return arrayMove(tasks, activeIndex, overIndex - 1);
         }
         return arrayMove(tasks, activeIndex, overIndex);
