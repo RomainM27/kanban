@@ -19,8 +19,7 @@ yarn dev
 ### Localhost
 
 - Frontend : http://localhost:5173/
-- Backend : http://localhost:3000/api
-  (Once it's up you can check : http://localhost:3000/api/boards/1)
+- Backend : http://localhost:3000/api Info with swagger
 
 ### Database
 
