@@ -1,5 +1,5 @@
 import axios from "axios";
-import { URL } from "./constante";
+import { URL } from "./constant";
 import { Task, NewTask, UpdateTask } from "../types";
 
 export function update(updateTask: UpdateTask): Promise<Task> {
@@ -13,6 +13,6 @@ export function create(props: { newTask: NewTask }) {
   return axios.post(`${URL}/tasks`, newTask).then((res) => res.data);
 }
 
-export function remove(id: number) {
+export function remove(id: string) {
   return axios.delete(`${URL}/tasks/${id}`).then((res) => res.data);
 }

@@ -2,15 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import Layout from "../Layout";
 import KanbanBoardContainer from "./KanbanBoardContainer";
 import { Board } from "../../types";
-import { getBoard } from "../../api/board";
-import { wait } from "@/lib/utils";
+import { getFirstBoard } from "../../api/board";
 
 function KanbanBoard() {
   const kanbanBoardQuery = useQuery<Board>({
-    queryKey: ["boards", 1],
+    queryKey: ["boards", "first"],
     queryFn: async () => {
-      await wait(1000);
-      return getBoard(1);
+      return getFirstBoard();
     },
   });
 

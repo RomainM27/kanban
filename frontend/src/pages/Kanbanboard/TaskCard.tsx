@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   task: Task;
-  deleteTask: (id: number) => void;
+  deleteTask: (id: string) => void;
   handleUpdateTask: (task: Task) => void;
 };
 

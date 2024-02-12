@@ -15,15 +15,14 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type Props = {
   section: Section;
-  createTask: (sectionId: number) => void;
+  createTask: (sectionId: string) => void;
   handleUpdateTask: (task: Task) => void;
-  deleteTask: (id: number) => void;
+  deleteTask: (id: string) => void;
   tasks: Task[];
 };
 
 function ColumnContainer(props: Props) {
   const { section, createTask, handleUpdateTask, deleteTask, tasks } = props;
-
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task?.id);
   }, [tasks]);

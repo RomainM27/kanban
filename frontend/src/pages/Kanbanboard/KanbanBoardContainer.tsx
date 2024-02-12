@@ -5,6 +5,7 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  closestCorners,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -52,7 +53,7 @@ function KanbanBoardContainer(props: Props) {
     },
   });
 
-  const createTask = (sectionId: number) => {
+  const createTask = (sectionId: string) => {
     const newTask = {
       title: `Task ${tasks.length + 1}`,
       sectionId,
@@ -72,7 +73,7 @@ function KanbanBoardContainer(props: Props) {
     },
   });
 
-  const deleteTask = (id: number) => {
+  const deleteTask = (id: string) => {
     deleteTaskMutation.mutate(id);
   };
 
@@ -92,6 +93,7 @@ function KanbanBoardContainer(props: Props) {
   const { tasks, activeTask, onDragStart, onDragEnd, onDragOver, setTasks } =
     useDragAndDrop({
       initialTasks: defaultTasks,
+      initialSections: boardData.sections,
     });
 
   const sensors = useSensors(
@@ -110,6 +112,7 @@ function KanbanBoardContainer(props: Props) {
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
+          collisionDetection={closestCorners}
         >
           {boardData.sections.map((col) => (
             <ColumnContainer

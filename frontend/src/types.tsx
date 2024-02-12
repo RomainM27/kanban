@@ -1,7 +1,7 @@
-export type Id = number;
+export type Id = string;
 
 export type Board = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   createdAt: string;
@@ -10,22 +10,22 @@ export type Board = {
 };
 
 export type Section = {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   order: number;
-  boardId: number;
+  boardId: string;
   createdAt: string;
   updatedAt: string;
   tasks: Task[] | [];
 };
 
 export type Task = {
-  id: number;
+  id: string;
   title: string;
   order: number;
   description?: string;
-  sectionId: number;
+  sectionId: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -33,13 +33,13 @@ export type Task = {
 export type NewTask = {
   title: string;
   description?: string;
-  sectionId: number;
+  sectionId: string;
 };
 
 export type UpdateTask = {
-  id: number;
+  id: string;
   title?: string;
   order?: number;
   description?: string;
-  sectionId?: number;
+  sectionId?: string;
 };
