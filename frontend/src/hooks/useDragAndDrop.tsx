@@ -1,18 +1,23 @@
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
-import { Task } from "../types";
+import { Task, Section } from "../types";
 import useUpdateTask from "./useUpdateTask";
 
 type Props = {
   initialTasks: Task[];
+  initialSections: Section[];
 };
 function useDragAndDrop(props: Props) {
-  const { initialTasks } = props;
+  const { initialTasks, initialSections } = props;
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const [sectionTitleOnDragStart, setSectionTitleOnDragStart] = useState<
+    string | null
+  >(null);
 
   const updateTaskMutation = useUpdateTask();
 
@@ -21,11 +26,15 @@ function useDragAndDrop(props: Props) {
     if (!active.data.current) {
       return;
     }
+    console.log("DRAG START");
 
     const type = active.data.current?.type;
 
     if (type === "Task") {
       setActiveTask(active.data.current.task);
+      setSectionTitleOnDragStart(
+        getSectionTitleById(active.data.current.task.sectionId)
+      );
     }
   };
 
@@ -37,7 +46,7 @@ function useDragAndDrop(props: Props) {
 
     if (!active.data.current) return;
 
-    const id = Number(active.id);
+    const id = active.id as string;
 
     console.log("DRAG END");
     updateTaskMutation.mutate({
@@ -61,6 +70,20 @@ function useDragAndDrop(props: Props) {
 
     if (!isActiveATask) return;
 
+    // get the section id of the element being overed
+    const sectionId =
+      over.data.current?.task?.sectionId ?? over.data.current?.section?.id;
+
+    const overSectionTitle = getSectionTitleById(sectionId);
+
+    if (sectionTitleOnDragStart === "TO DO" && overSectionTitle === "DONE") {
+      return; // Prevent the move
+    }
+
+    if (sectionTitleOnDragStart === "DONE" && overSectionTitle === "TO DO") {
+      return; // Prevent the move
+    }
+
     if (isActiveATask && isOverATask) {
       setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => t?.id === activeId);
@@ -80,7 +103,7 @@ function useDragAndDrop(props: Props) {
       setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => t?.id === activeId);
 
-        tasks[activeIndex].sectionId = Number(overId);
+        tasks[activeIndex].sectionId = overId as string;
 
         console.log("DROPPING TASK OVER SECTION", { activeIndex });
         return arrayMove(tasks, activeIndex, activeIndex);
@@ -91,6 +114,17 @@ function useDragAndDrop(props: Props) {
   const resetActive = () => {
     setActiveTask(null);
   };
+
+  function getSectionTitleById(sectionId: string): string {
+    const title = initialSections.find(
+      (section) => section.id === sectionId
+    )?.title;
+
+    // TODO throw error
+    if (!title) return "No title found";
+
+    return title;
+  }
 
   return {
     tasks,
