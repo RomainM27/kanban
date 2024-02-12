@@ -4,6 +4,7 @@ import {
   MinLength,
   IsInt,
   IsOptional,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateTaskDto {
@@ -21,6 +22,6 @@ export class CreateTaskDto {
   description?: string;
 
   @IsNotEmpty()
-  @IsInt()
-  sectionId: number;
+  @IsUUID()
+  sectionId: string;
 }

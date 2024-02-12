@@ -5,7 +5,7 @@ import { DatabaseService } from 'src/database/database.service';
 export class SectionsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       return await this.databaseService.section.findFirstOrThrow({
         where: { id },

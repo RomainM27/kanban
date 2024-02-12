@@ -5,7 +5,35 @@ import { DatabaseService } from 'src/database/database.service';
 export class BoardsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async findOne(id: number) {
+  async findFirst() {
+    const boards = await this.databaseService.board.findMany({
+      take: 1,
+      include: {
+        sections: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            tasks: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    console.log(boards);
+
+    if (!boards) {
+      throw new NotFoundException(`No board found.`);
+    }
+
+    return boards[0];
+  }
+
+  async findOne(id: string) {
     try {
       return this.databaseService.board.findFirstOrThrow({
         where: {

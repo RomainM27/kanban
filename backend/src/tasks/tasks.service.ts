@@ -29,12 +29,12 @@ export class TasksService {
     });
   }
 
-  async findAll(sectionId?: number) {
+  async findAll(sectionId?: string) {
     if (sectionId !== undefined && !(await this.isValidSection(sectionId))) {
       throw new BadRequestException(`Section with ID ${sectionId} is invalid.`);
     }
 
-    const queryOptions: { where?: { sectionId: number } } = {};
+    const queryOptions: { where?: { sectionId: string } } = {};
 
     if (typeof sectionId !== 'undefined') {
       queryOptions.where = { sectionId };
@@ -43,7 +43,7 @@ export class TasksService {
     return this.databaseService.task.findMany(queryOptions);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       return await this.databaseService.task.findFirstOrThrow({
         where: { id },
@@ -53,7 +53,7 @@ export class TasksService {
     }
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto) {
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
     return await this.databaseService.$transaction(async (databaseService) => {
       const task = await databaseService.task.findUnique({
         where: { id },
@@ -135,7 +135,7 @@ export class TasksService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const task = await this.databaseService.task.findUnique({
       where: { id },
     });
@@ -149,7 +149,7 @@ export class TasksService {
     });
   }
 
-  async findHighestOrderInSection(sectionId: number): Promise<number> {
+  async findHighestOrderInSection(sectionId: string): Promise<number> {
     const tasks = await this.databaseService.task.findMany({
       where: { sectionId },
       orderBy: { order: 'desc' },
@@ -165,7 +165,7 @@ export class TasksService {
     return tasks[0].order;
   }
 
-  async isValidSection(sectionId: number): Promise<boolean> {
+  async isValidSection(sectionId: string): Promise<boolean> {
     const section = await this.databaseService.section.findUnique({
       where: { id: sectionId },
     });
